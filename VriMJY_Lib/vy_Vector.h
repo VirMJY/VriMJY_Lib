@@ -4,6 +4,7 @@
 
 #include"vy_Define.h"
 #include<memory>
+#include<cstring>
 
 namespace vstl
 {
@@ -24,10 +25,28 @@ namespace vstl
 		//Get
 		size_tp size() const;
 		size_tp memory() const;
+
+
+		//Element access
+		Type& at(unsigned int index);
+		Type& front();
+		Type& back();
+		Type* data();
+
+
+		//Modifiers
+		void push_back(Type& data);
+		void pop_back();
+		void insert(unsigned int index);
+		void erase(unsigned int index);
+		void swap(Vector<Type>& lhand, Vector<Type>& rhand);
+		void clear();
 	protected:
 	private:
 		//Functions
 		void Malloc(size_tp size);
+		void Reset(size_tp NewSize, size_tp NewMemory);
+		void CopyData(Type* pOld, Type* pNew);
 		//Variables
 		size_tp m_Size;
 		size_tp m_Memory;
@@ -38,6 +57,9 @@ namespace vstl
 	/*******************************************************/
 	/*                     implement                       */
 	/*******************************************************/
+
+	//public functions
+	//constructors
 	template<typename Type>
 	inline Vector<Type>::Vector(size_tp size)
 	{
@@ -65,11 +87,15 @@ namespace vstl
 
 		}
 	}
+
+	//destructor
 	template<typename Type>
 	inline Vector<Type>::~Vector()
 	{
 		free(m_pData);
 	}
+
+	//Operators
 	template<typename Type>
 	inline const Type & Vector<Type>::operator[](unsigned int index) const
 	{
@@ -80,6 +106,8 @@ namespace vstl
 	{
 		return m_pData[index];
 	}
+
+	//Get
 	template<typename Type>
 	inline size_tp Vector<Type>::size() const
 	{
@@ -90,12 +118,62 @@ namespace vstl
 	{
 		return m_Memory;
 	}
+
+	//Element access
+	template<typename Type>
+	inline Type & Vector<Type>::at(unsigned int index)
+	{
+		//throw out_of_range exception
+		if(index < 0 || index > m_Size)
+			return Type();
+
+		return m_pData[index];
+	}
+	template<typename Type>
+	inline Type & Vector<Type>::front()
+	{
+		if(m_Size > 0)
+			return m_pData[0];
+		else
+			//throw exception
+			return Type();
+	}
+	template<typename Type>
+	inline Type & Vector<Type>::back()
+	{
+		if(m_Size > 0)
+			return m_pData[m_Size-1];
+		else
+		//throw exception
+			return Type();
+	}
+	template<typename Type>
+	inline Type * Vector<Type>::data()
+	{
+		return m_pData;
+	}
+
+	//Protected functions
+	
+	//Private functions
+	//malloc new storage space
 	template<typename Type>
 	inline void Vector<Type>::Malloc(size_tp size)
 	{
 		m_Memory = sizeof(Type)*m_Size*2;
 		m_pData = (Type*)malloc(m_Memory);
 	}
-}
+	//Reset the m_Size and m_Memory
+	template<typename Type>
+	inline void Vector<Type>::Reset(size_tp NewSize, size_tp NewMemory)
+	{
+		m_Size = NewSize;
+		m_Memory = NewMemory;
+	}
+	template<typename Type>
+	inline void Vector<Type>::CopyData(Type* pOld, Type* pNew)
+	{
 
+	}
+}
 #endif
