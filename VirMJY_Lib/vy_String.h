@@ -4,7 +4,6 @@
 
 namespace vstl
 {
-	template<typename Type = char>
 	class String
 	{
 	public:
@@ -23,7 +22,8 @@ namespace vstl
         String& operator=(const String& rhand);
     protected:
     private:
-        size_tp m_Size;
+		size_tp m_Size;
+		const char* m_CStr;
 	};
 }
 #endif

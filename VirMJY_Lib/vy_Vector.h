@@ -39,7 +39,7 @@ namespace vstl
 		void pop_back();
 		void insert(unsigned int index);
 		void erase(unsigned int index);
-		void swap(Vector<Type>& lhand, Vector<Type>& rhand);
+		void swap(Vector<Type>& rhand);
 		void clear();
 	protected:
 	private:
@@ -59,7 +59,7 @@ namespace vstl
 	/*******************************************************/
 
 	//public functions
-	//constructors
+	//Constructors
 	template<typename Type>
 	inline Vector<Type>::Vector(size_tp size)
 	{
@@ -88,7 +88,7 @@ namespace vstl
 		}
 	}
 
-	//destructor
+	//Destructor
 	template<typename Type>
 	inline Vector<Type>::~Vector()
 	{
@@ -151,6 +151,28 @@ namespace vstl
 	inline Type * Vector<Type>::data()
 	{
 		return m_pData;
+	}
+
+	//Modifider
+	template<typename Type>
+	inline void Vector<Type>::swap(Vector<Type>& rhand)
+	{
+		//swap m_Size
+		size_tp stemp = rhand.m_Size;
+		rhand.m_Size = m_Size;
+		m_Size = stemp;
+
+		//swap m_Memory
+		size_tp mtemp = rhand.m_Memory;
+		rhand.m_Memory = m_Memory;
+		m_Memory = mtemp;
+
+		//swap m_pData
+		Type* ptemp = rhand.m_pData;
+		rhand.m_pData = m_pData;
+		m_pData = temp;
+
+		temp = nullptr;
 	}
 
 	//Protected functions
