@@ -3,13 +3,13 @@
 #define VY_MAP_H_
 namespace vstl
 {
-    template<typename Type>
+    template<typename KeyType, typename ValType>
     class Map
     {
     public:
         Map();
     protected:
     private:
-    }
+    };
 }
 #endif
