@@ -37,7 +37,7 @@ namespace vstl
 		//Modifiers
 		void push_back(Type& data);
 		void pop_back();
-		void insert(unsigned int index);
+		void insert(unsigned int index, Type& data);
 		void erase(unsigned int index);
 		void swap(Vector<Type>& rhand);
 		void clear();
@@ -45,11 +45,13 @@ namespace vstl
 	private:
 		//Functions
 		void Malloc(size_tp size, Type** pData);
+		void Realloc();
 		void Reset(size_tp NewSize, size_tp NewMemory);
-		void CopyData(Type* pOld, Type* pNew);
+		void CopyData(Type* pOld, Type* pNew, size_tp size);
 		//Variables
 		size_tp m_Size;
 		size_tp m_Memory;
+		size_tp m_Capacity;
 		Type*  m_pData;
 	};
 
@@ -64,7 +66,9 @@ namespace vstl
 	inline Vector<Type>::Vector(size_tp size)
 	{
 		m_Size = size;
-		Malloc(m_Size);
+		m_Capacity = m_Size*2;
+		m_Memory = sizeof(Type)*m_Size*2;  
+		Malloc(m_Size, **m_pData);
 	}
 	template<typename Type>
 	inline Vector<Type>::Vector(size_tp size, Type data):m_Size(size)
@@ -174,7 +178,6 @@ namespace vstl
 
 		temp = nullptr;
 	}
-
 	template<typename Type>
 	inline void Vector<Type>::clear()
 	{
@@ -183,7 +186,34 @@ namespace vstl
 		free(m_pData);
 		m_pData = nullptr;
 	}
+	template<typename Type>
+	inline void Vector<Type>::insert(unsigned int index, Type& data)
+	{
+		if(m_Size + 1 > m_Capacity)
+		{
+			Realloc();
+		}
 
+		for(int i = m_Size; i > index; --i)
+		{
+			memcpy_s(&m_pData[i-1], sizeof(Type), &m_pData[i], sizeof(Type));
+		}
+		m_pData[index] = data;
+	}
+	template<typename Type>
+	inline void Vector<Type>::erase(unsigned int index)
+	{
+		if(m_Size <= 0 || index > m_Sisze - 1 )
+		{
+			//throw out_of_range exception
+			return;
+		}
+		for(int i = index; i < m_Size-1; ++i)
+		{
+			memcpy_s(&m_pData[i], sizeof(Type), &m_pData[i+1], sizeof(Type));
+		}
+		m_Size -= 1;
+	}
 	//Protected functions
 	
 	//Private functions
@@ -191,8 +221,20 @@ namespace vstl
 	template<typename Type>
 	inline void Vector<Type>::Malloc(size_tp size, Type** pData)
 	{
-		m_Memory = sizeof(Type)*m_Size*2;
 		*pData = (Type*)malloc(m_Memory);
+	}
+	template<typename Type>
+	inline void Vector<Type>::Realloc()
+	{
+		Type* pTemp = nullptr;
+		Malloc(m_Capacity*2, **pTemp, m_Size);
+		CopyData(m_pData, pTemp);
+		free(m_pData);
+		m_pData = pTemp;
+		p_Temp = nullptr;
+		m_Size = m_Capacity;
+		m_Capacity *= 2;
+		m_Memory = sizeof(Type)*m_Capacity;
 	}
 	//Reset the m_Size and m_Memory
 	template<typename Type>
@@ -202,9 +244,9 @@ namespace vstl
 		m_Memory = NewMemory;
 	}
 	template<typename Type>
-	inline void Vector<Type>::CopyData(Type* pOld, Type* pNew)
+	inline void Vector<Type>::CopyData(Type* pOld, Type* pNew, size_tp size)
 	{
-		for (unsigned int i = 0; i < m_Size; ++i)
+		for (unsigned int i = 0; i < size; ++i)
 		{
 			memcpy_s(&pNew[i], sizeof(Type), &pOld[i], sizeof(Type));
 			
