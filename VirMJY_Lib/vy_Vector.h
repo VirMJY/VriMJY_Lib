@@ -199,6 +199,7 @@ namespace vstl
 			memcpy_s(&m_pData[i-1], sizeof(Type), &m_pData[i], sizeof(Type));
 		}
 		m_pData[index] = data;
+		m_Size += 1;
 	}
 	template<typename Type>
 	inline void Vector<Type>::erase(unsigned int index)
@@ -212,6 +213,21 @@ namespace vstl
 		{
 			memcpy_s(&m_pData[i], sizeof(Type), &m_pData[i+1], sizeof(Type));
 		}
+		m_Size -= 1;
+	}
+	template<typename Type>
+	inline void push_back(Type& data)
+	{
+		if(m_Size + 1 > m_Capacity)
+		{
+			Realloc();
+		}
+		m_pData[m_Size] = data;
+		m_Size += 1;
+	}
+	template<typename Type>
+	inline void pop_back()
+	{
 		m_Size -= 1;
 	}
 	//Protected functions
@@ -249,7 +265,6 @@ namespace vstl
 		for (unsigned int i = 0; i < size; ++i)
 		{
 			memcpy_s(&pNew[i], sizeof(Type), &pOld[i], sizeof(Type));
-			
 		}
 	}
 }
