@@ -4,13 +4,24 @@
 
 namespace vstl
 {
+	/*************************************************/
+	/*				Others functions 				 */
+	/*************************************************/
+	size_tp Strlen(const char* _Str);
+
+
+	/*************************************************/
+	/*						String					 */
+	/*************************************************/
+	template<typename Type = char>
 	class String
 	{
 	public:
         //Constructor
         String();
         String(const char* c_str);
-        String(String& string);
+		String(String& string);
+		explic
 
         //Destructor
         ~String();
@@ -21,9 +32,64 @@ namespace vstl
         bool operator<(const String& rhand)const;
         String& operator=(const String& rhand);
     protected:
-    private:
+	private:
+		//Functions
+		void Malloc(size_tp size, Type** pData);
+		//Variables
 		size_tp m_Size;
-		const char* m_CStr;
+		Type* m_CStr;
 	};
+
+
+	/*****************************************************/
+	/*				String	Implement					 */
+	/*****************************************************/
+
+	//Constructors
+	template<typename Type>
+    String::String()
+    {
+
+    }
+	template<typename Type>
+    String::String(const char* c_str)
+    {
+        
+    }
+	template<typename Type>
+    String::String(String& rhand)
+    {
+		m_Size = strlen()
+    }
+
+	//Destructor
+	template<typename Type>
+    String<Type>::~String()
+    {
+
+    }
+
+	//Operators
+	template<typename Type>
+    bool String<Type>::operator==(const String& rhand)
+    {
+
+    }
+	template<typename Type>
+    String& String<Type>::operator=(const String& rhand)
+    {
+
+    }
+	template<typename Type>
+    bool String<Type>::operator>(const String& rhand)
+    {
+
+    }
+	template<typename Type>
+    bool String<Type>::operator<(const String& rhand)
+    {
+
+	}
+	
 }
 #endif
