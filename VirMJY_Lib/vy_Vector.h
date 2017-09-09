@@ -69,7 +69,7 @@ namespace vstl
 	template<typename Type>
 	inline Vector<Type>::Vector(size_tp size, Type data):m_Size(size)
 	{
-		Malloc(size);
+		Malloc(size, *m_pData);
 		for (unsigned int i = 0; i < m_Size; ++i)
 		{
 			memcpy_s(&m_pData[i], sizeof(Type), &data, sizeof(Type));
@@ -175,15 +175,24 @@ namespace vstl
 		temp = nullptr;
 	}
 
+	template<typename Type>
+	inline void Vector<Type>::clear()
+	{
+		m_Size = 0;
+		m_Memory = 0;
+		free(m_pData);
+		m_pData = nullptr;
+	}
+
 	//Protected functions
 	
 	//Private functions
 	//malloc new storage space
 	template<typename Type>
-	inline void Vector<Type>::Malloc(size_tp size)
+	inline void Vector<Type>::Malloc(size_tp size, Type** pData)
 	{
 		m_Memory = sizeof(Type)*m_Size*2;
-		m_pData = (Type*)malloc(m_Memory);
+		*pData = (Type*)malloc(m_Memory);
 	}
 	//Reset the m_Size and m_Memory
 	template<typename Type>
@@ -195,7 +204,11 @@ namespace vstl
 	template<typename Type>
 	inline void Vector<Type>::CopyData(Type* pOld, Type* pNew)
 	{
-
+		for (unsigned int i = 0; i < m_Size; ++i)
+		{
+			memcpy_s(&pNew[i], sizeof(Type), &pOld[i], sizeof(Type));
+			
+		}
 	}
 }
 #endif
