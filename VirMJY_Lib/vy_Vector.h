@@ -44,7 +44,7 @@ namespace vstl
 	protected:
 	private:
 		//Functions
-		void Malloc(size_tp size);
+		void Malloc(size_tp size, Type** pData);
 		void Reset(size_tp NewSize, size_tp NewMemory);
 		void CopyData(Type* pOld, Type* pNew);
 		//Variables
