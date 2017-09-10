@@ -21,7 +21,7 @@ namespace vstl
         String();
         String(const char* c_str);
 		String(String& string);
-		explic
+		String(unsigned int Count, Type& a_Data);
 
         //Destructor
         ~String();
@@ -44,7 +44,7 @@ namespace vstl
 	/*****************************************************/
 	/*				String	Implement					 */
 	/*****************************************************/
-
+	//Public functions
 	//Constructors
 	template<typename Type>
     String::String()
@@ -90,6 +90,10 @@ namespace vstl
     {
 
 	}
+	
+	//Protected functions
+
+	//Private functions
 	
 }
 #endif
