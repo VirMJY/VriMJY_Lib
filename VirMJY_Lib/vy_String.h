@@ -35,7 +35,8 @@ namespace vstl
 		void clear();
 		bool empty() const;
 		//Element access
-
+		Type& operator[](unsigned int index);
+		Type& at(unsigned int index);
 		//Modifiers
 
 		//String operations
@@ -90,16 +91,45 @@ namespace vstl
 		free(m_pData);
     }
 
+	//Element access
+	template<typename Type, typename _allocator>
+	Type& basic_string<Type, _allocator>::operator[](unsigned int index)
+	{
+		return  m_pData[index];
+	}
+	template<typename Type, typename _allocator>
+	Type& basic_string<Type, _allocator>::at(unsigned int index)
+	{
+		if(index < 0 || index >= size)
+		{
+			//Throw out_of_range exception
+			return Type();
+		}
+		return m_pData[index];
+	}
+
 	//Operators
 	template<typename Type, typename _allocator>
     bool basic_string<Type, _allocator>::operator==(const basic_string<Type, _allocator>& rhand)
     {
-
+		if(rhand.m_Size != m_Size)	return false;
+		int size = 0;
+		while(rhand[size] == (*this)[size] && size <= m_Size)
+		{
+			++size;
+		}
+		return size == m_Size;
     }
 	template<typename Type, typename _allocator>
     basic_string& basic_string<Type, _allocator>::operator=(const basic_string<Type, _allocator>& rhand)
     {
+		if(&rhand == this)	return *this;
 
+		m_Size = rhand.m_Size;
+		m_Capacity = rhand.m_Capacity;
+		free(m_pData);
+		Malloc(m_Capacity, &m_pData);
+		CopyData(rhand.m_pData, m_pData, m_Size);
     }
 	//Protected functions
 
@@ -108,6 +138,14 @@ namespace vstl
 	void basic_string<Type, _allocator>::Malloc(size_tp size, Type** pData)
 	{
 		*pData = (Type*)malloc(sizeof(Type)*size);
+	}
+	template<typename Type, typename _allocator>
+	void basic_string<Type, _allocator>::CopyData(Type* pOld, Type* pNew, size_tp size)
+	{
+		for(int i = 0; i < size; ++i)
+		{
+		memcpy_s(&pOld[i], sizeof(Type), &pNew[i], sizeof(Type));
+		}
 	}
 
 	//Non-member functions
