@@ -130,7 +130,14 @@ namespace vstl
 		}
 		else
 		{
-			
+			Type* temp = nullptr;
+			Malloc(m_Capacity<<1, &temp);
+			CopyData(m_pData, temp, m_Size);
+			m_Capacity = m_Capacity<<1;
+			free(m_pData);
+			m_pData = temp;
+			m_pData[m_Size] = c;
+			++m_Size;
 		}
 
 		return *this;
