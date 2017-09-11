@@ -38,8 +38,8 @@ namespace vstl
 
 		//Modifiers
 
-		//basic_string operations
-		
+		//String operations
+		const char* c_str()const;
         //Operator
         bool operator==(const basic_string& rhand)const;
         basic_string& operator=(const basic_string& rhand);
@@ -47,16 +47,19 @@ namespace vstl
 	private:
 		//Functions
 		void Malloc(size_tp size, Type** pData);
+		void Realloc(size_tp size, Type** pData);
+		void CopyData(const Type* pOld, Type* pNew, size_tp size);
 		//Variables
 		size_tp m_Size;
 		size_tp m_Capacity;
 		size_tp m_MaxSize;
+		Type* m_pData;
 		Type* m_CStr;
 	};
 
 
 	/*****************************************************/
-	/*				basic_string	Implement					 */
+	/*				basic_string	Implement			 */
 	/*****************************************************/
 	//Public functions
 	//Constructors
@@ -68,19 +71,23 @@ namespace vstl
 	template<typename Type, typename _allocator>
     basic_string<Type, _allocator>::basic_string(const char* c_str)
     {
-        
+		m_Size = Strlen(c_str);
+		m_Capacity = m_Size<<1;
+		Malloc(m_Capacity, &m_pData);
+		CopyData(c_str, m_pData, m_Size);
     }
 	template<typename Type, typename _allocator>
-    basic_string<Type, _allocator>::basic_string(basic_string<Type, _allocator>& rhand)
+    basic_string<Type, _allocator>::basic_string(basic_string<Type, _allocator>& rhand):m_Size(rhand.m_Size), m_Capacity(rhand.m_Capacity)
     {
-		m_Size = Strlen()
+		Malloc(m_Capacity, &m_pData);
+		CopyData(rhand.m_pData, m_pData, m_Size);
     }
 
 	//Destructor
 	template<typename Type, typename _allocator>
     basic_string<Type, _allocator>::~basic_string()
     {
-
+		free(m_pData);
     }
 
 	//Operators
@@ -97,8 +104,11 @@ namespace vstl
 	//Protected functions
 
 	//Private functions
-
-
+	template<typename Type, typename _allocator>
+	void basic_string<Type, _allocator>::Malloc(size_tp size, Type** pData)
+	{
+		*pData = (Type*)malloc(sizeof(Type)*size);
+	}
 
 	//Non-member functions
 	template<typename Type = char>

@@ -50,7 +50,6 @@ namespace vstl
 		void CopyData(Type* pOld, Type* pNew, size_tp size);
 		//Variables
 		size_tp m_Size;
-		size_tp m_Memory;
 		size_tp m_Capacity;
 		Type*  m_pData;
 	};
@@ -63,17 +62,14 @@ namespace vstl
 	//public functions
 	//Constructors
 	template<typename Type, typename _allocator>
-	inline Vector<Type, _allocator>::Vector(size_tp size)
+	inline Vector<Type, _allocator>::Vector(size_tp size): m_Size(size), m_Capacity(size<<1)
 	{
-		m_Size = size;
-		m_Capacity = m_Size*2;
-		m_Memory = sizeof(Type)*m_Size*2;  
-		Malloc(m_Size, **m_pData);
+		Malloc(m_Capacity, **m_pData);
 	}
 	template<typename Type, typename _allocator>
-	inline Vector<Type, _allocator>::Vector(size_tp size, Type data):m_Size(size)
+	inline Vector<Type, _allocator>::Vector(size_tp size, Type data):m_Size(size), m_Capacity(size<<1)
 	{
-		Malloc(size, *m_pData);
+		Malloc(m_Capacity, *m_pData);
 		for (unsigned int i = 0; i < m_Size; ++i)
 		{
 			memcpy_s(&m_pData[i], sizeof(Type), &data, sizeof(Type));
@@ -81,13 +77,13 @@ namespace vstl
 		}
 	}
 	template<typename Type, typename _allocator>
-	inline Vector<Type, _allocator>::Vector(Vector<Type, _allocator> & rhand):m_Size(rhand.m_Size), m_Memory(rhand.m_Memory)
+	inline Vector<Type, _allocator>::Vector(Vector<Type, _allocator> & rhand):m_Size(rhand.m_Size), m_Capacity(rhand.m_Capacity)
 	{
 
-		Malloc(m_Size);
+		Malloc(m_Capacity, &m_pData);
 		for (unsigned int i = 0; i < m_Size; ++i)
 		{
-			memcpy_s(&m_pData[i], sizeof(Type), &(rhand.m_pData[i]), sizeof(Type));
+			memcpy_s(&(m_pData[i]), sizeof(Type), &(rhand.m_pData[i]), sizeof(Type));
 
 		}
 	}
@@ -116,11 +112,6 @@ namespace vstl
 	inline size_tp Vector<Type, _allocator>::size() const
 	{
 		return m_Size;
-	}
-	template<typename Type, typename _allocator>
-	inline size_tp Vector<Type, _allocator>::memory() const
-	{
-		return m_Memory;
 	}
 
 	//Element access
@@ -166,11 +157,6 @@ namespace vstl
 		rhand.m_Size = m_Size;
 		m_Size = stemp;
 
-		//swap m_Memory
-		size_tp mtemp = rhand.m_Memory;
-		rhand.m_Memory = m_Memory;
-		m_Memory = mtemp;
-
 		//swap m_pData
 		Type* ptemp = rhand.m_pData;
 		rhand.m_pData = m_pData;
@@ -182,7 +168,6 @@ namespace vstl
 	inline void Vector<Type, _allocator>::clear()
 	{
 		m_Size = 0;
-		m_Memory = 0;
 		free(m_pData);
 		m_pData = nullptr;
 	}
@@ -237,27 +222,25 @@ namespace vstl
 	template<typename Type, typename _allocator>
 	inline void Vector<Type, _allocator>::Malloc(size_tp size, Type** pData)
 	{
-		*pData = (Type*)malloc(m_Memory);
+		*pData = (Type*)malloc(size*sizeof(Type));
 	}
 	template<typename Type, typename _allocator>
 	inline void Vector<Type, _allocator>::Realloc()
 	{
 		Type* pTemp = nullptr;
-		Malloc(m_Capacity*2, **pTemp, m_Size);
+		Malloc(m_Capacity*2, **pTemp);
 		CopyData(m_pData, pTemp);
 		free(m_pData);
 		m_pData = pTemp;
 		p_Temp = nullptr;
 		m_Size = m_Capacity;
 		m_Capacity *= 2;
-		m_Memory = sizeof(Type)*m_Capacity;
 	}
-	//Reset the m_Size and m_Memory
+	//Reset the m_Size
 	template<typename Type, typename _allocator>
 	inline void Vector<Type, _allocator>::Reset(size_tp NewSize, size_tp NewMemory)
 	{
 		m_Size = NewSize;
-		m_Memory = NewMemory;
 	}
 	template<typename Type, typename _allocator>
 	inline void Vector<Type, _allocator>::CopyData(Type* pOld, Type* pNew, size_tp size)
