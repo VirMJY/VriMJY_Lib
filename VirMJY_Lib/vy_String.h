@@ -13,7 +13,7 @@ namespace vstl
 	/*************************************************/
 	/*						String					 */
 	/*************************************************/
-	template<typename Type = char>
+	template<typename Type = char, typename _allocator = Allocator>
 	class String
 	{
 	public:
@@ -26,10 +26,17 @@ namespace vstl
         //Destructor
         ~String();
 
+
+		//Capacity
+
+		//Element access
+
+		//Modifiers
+
+		//String operations
+		
         //Operator
         bool operator==(const String& rhand)const;
-        bool operator>(const String& rhand)const;
-        bool operator<(const String& rhand)const;
         String& operator=(const String& rhand);
     protected:
 	private:
@@ -46,54 +53,51 @@ namespace vstl
 	/*****************************************************/
 	//Public functions
 	//Constructors
-	template<typename Type>
+	template<typename Type = char, typename _allocator = Allocator>
     String::String()
     {
 
     }
-	template<typename Type>
+	template<typename Type = char, typename _allocator = Allocator>
     String::String(const char* c_str)
     {
         
     }
-	template<typename Type>
+	template<typename Type = char, typename _allocator = Allocator>
     String::String(String& rhand)
     {
-		m_Size = strlen()
+		m_Size = Strlen()
     }
 
 	//Destructor
-	template<typename Type>
+	template<typename Type = char, typename _allocator = Allocator>
     String<Type>::~String()
     {
 
     }
 
 	//Operators
-	template<typename Type>
+	template<typename Type = char, typename _allocator = Allocator>
     bool String<Type>::operator==(const String& rhand)
     {
 
     }
-	template<typename Type>
+	template<typename Type = char, typename _allocator = Allocator>
     String& String<Type>::operator=(const String& rhand)
     {
 
     }
-	template<typename Type>
-    bool String<Type>::operator>(const String& rhand)
-    {
-
-    }
-	template<typename Type>
-    bool String<Type>::operator<(const String& rhand)
-    {
-
-	}
-	
 	//Protected functions
 
 	//Private functions
-	
+
+
+
+	//Non-member functions
+	template<typename Type = char>
+	String<Type>& operator+ (String<Type>& lhand, String<Type>& rhand)
+	{
+
+	}
 }
 #endif

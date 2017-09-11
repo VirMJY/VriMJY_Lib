@@ -5,10 +5,10 @@
 #include"vy_Define.h"
 #include<memory>
 #include<cstring>
-
+#include"vy_allocator.h"
 namespace vstl
 {
-	template<typename Type>
+	template<typename Type, typename _allocator = Allocator>
 	class Vector
 	{
 	public:
@@ -62,16 +62,16 @@ namespace vstl
 
 	//public functions
 	//Constructors
-	template<typename Type>
-	inline Vector<Type>::Vector(size_tp size)
+	template<typename Type, typename _allocator>
+	inline Vector<Type, _allocator>::Vector(size_tp size)
 	{
 		m_Size = size;
 		m_Capacity = m_Size*2;
 		m_Memory = sizeof(Type)*m_Size*2;  
 		Malloc(m_Size, **m_pData);
 	}
-	template<typename Type>
-	inline Vector<Type>::Vector(size_tp size, Type data):m_Size(size)
+	template<typename Type, typename _allocator>
+	inline Vector<Type, _allocator>::Vector(size_tp size, Type data):m_Size(size)
 	{
 		Malloc(size, *m_pData);
 		for (unsigned int i = 0; i < m_Size; ++i)
@@ -80,8 +80,8 @@ namespace vstl
 			
 		}
 	}
-	template<typename Type>
-	inline Vector<Type>::Vector(Vector & rhand):m_Size(rhand.m_Size), m_Memory(rhand.m_Memory)
+	template<typename Type, typename _allocator>
+	inline Vector<Type, _allocator>::Vector(Vector<Type, _allocator> & rhand):m_Size(rhand.m_Size), m_Memory(rhand.m_Memory)
 	{
 
 		Malloc(m_Size);
@@ -93,39 +93,39 @@ namespace vstl
 	}
 
 	//Destructor
-	template<typename Type>
-	inline Vector<Type>::~Vector()
+	template<typename Type, typename _allocator>
+	inline Vector<Type, _allocator>::~Vector()
 	{
 		free(m_pData);
 	}
 
 	//Operators
-	template<typename Type>
-	inline const Type & Vector<Type>::operator[](unsigned int index) const
+	template<typename Type, typename _allocator>
+	inline const Type & Vector<Type, _allocator>::operator[](unsigned int index) const
 	{
 		return m_pData[index];
 	}
-	template<typename Type>
-	inline Type & Vector<Type>::operator[](unsigned int index)
+	template<typename Type, typename _allocator>
+	inline Type & Vector<Type, _allocator>::operator[](unsigned int index)
 	{
 		return m_pData[index];
 	}
 
 	//Get
-	template<typename Type>
-	inline size_tp Vector<Type>::size() const
+	template<typename Type, typename _allocator>
+	inline size_tp Vector<Type, _allocator>::size() const
 	{
 		return m_Size;
 	}
-	template<typename Type>
-	inline size_tp Vector<Type>::memory() const
+	template<typename Type, typename _allocator>
+	inline size_tp Vector<Type, _allocator>::memory() const
 	{
 		return m_Memory;
 	}
 
 	//Element access
-	template<typename Type>
-	inline Type & Vector<Type>::at(unsigned int index)
+	template<typename Type, typename _allocator>
+	inline Type & Vector<Type, _allocator>::at(unsigned int index)
 	{
 		//throw out_of_range exception
 		if(index < 0 || index > m_Size)
@@ -133,8 +133,8 @@ namespace vstl
 
 		return m_pData[index];
 	}
-	template<typename Type>
-	inline Type & Vector<Type>::front()
+	template<typename Type, typename _allocator>
+	inline Type & Vector<Type, _allocator>::front()
 	{
 		if(m_Size > 0)
 			return m_pData[0];
@@ -142,8 +142,8 @@ namespace vstl
 			//throw exception
 			return Type();
 	}
-	template<typename Type>
-	inline Type & Vector<Type>::back()
+	template<typename Type, typename _allocator>
+	inline Type & Vector<Type, _allocator>::back()
 	{
 		if(m_Size > 0)
 			return m_pData[m_Size-1];
@@ -151,15 +151,15 @@ namespace vstl
 		//throw exception
 			return Type();
 	}
-	template<typename Type>
-	inline Type * Vector<Type>::data()
+	template<typename Type, typename _allocator>
+	inline Type * Vector<Type, _allocator>::data()
 	{
 		return m_pData;
 	}
 
 	//Modifider
-	template<typename Type>
-	inline void Vector<Type>::swap(Vector<Type>& rhand)
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::swap(Vector<Type>& rhand)
 	{
 		//swap m_Size
 		size_tp stemp = rhand.m_Size;
@@ -178,16 +178,16 @@ namespace vstl
 
 		temp = nullptr;
 	}
-	template<typename Type>
-	inline void Vector<Type>::clear()
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::clear()
 	{
 		m_Size = 0;
 		m_Memory = 0;
 		free(m_pData);
 		m_pData = nullptr;
 	}
-	template<typename Type>
-	inline void Vector<Type>::insert(unsigned int index, Type& data)
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::insert(unsigned int index, Type& data)
 	{
 		if(m_Size + 1 > m_Capacity)
 		{
@@ -201,8 +201,8 @@ namespace vstl
 		m_pData[index] = data;
 		m_Size += 1;
 	}
-	template<typename Type>
-	inline void Vector<Type>::erase(unsigned int index)
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::erase(unsigned int index)
 	{
 		if(m_Size <= 0 || index > m_Sisze - 1 )
 		{
@@ -215,8 +215,8 @@ namespace vstl
 		}
 		m_Size -= 1;
 	}
-	template<typename Type>
-	inline void push_back(Type& data)
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::push_back(Type& data)
 	{
 		if(m_Size + 1 > m_Capacity)
 		{
@@ -225,8 +225,8 @@ namespace vstl
 		m_pData[m_Size] = data;
 		m_Size += 1;
 	}
-	template<typename Type>
-	inline void pop_back()
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::pop_back()
 	{
 		m_Size -= 1;
 	}
@@ -234,13 +234,13 @@ namespace vstl
 	
 	//Private functions
 	//malloc new storage space
-	template<typename Type>
-	inline void Vector<Type>::Malloc(size_tp size, Type** pData)
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::Malloc(size_tp size, Type** pData)
 	{
 		*pData = (Type*)malloc(m_Memory);
 	}
-	template<typename Type>
-	inline void Vector<Type>::Realloc()
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::Realloc()
 	{
 		Type* pTemp = nullptr;
 		Malloc(m_Capacity*2, **pTemp, m_Size);
@@ -253,14 +253,14 @@ namespace vstl
 		m_Memory = sizeof(Type)*m_Capacity;
 	}
 	//Reset the m_Size and m_Memory
-	template<typename Type>
-	inline void Vector<Type>::Reset(size_tp NewSize, size_tp NewMemory)
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::Reset(size_tp NewSize, size_tp NewMemory)
 	{
 		m_Size = NewSize;
 		m_Memory = NewMemory;
 	}
-	template<typename Type>
-	inline void Vector<Type>::CopyData(Type* pOld, Type* pNew, size_tp size)
+	template<typename Type, typename _allocator>
+	inline void Vector<Type, _allocator>::CopyData(Type* pOld, Type* pNew, size_tp size)
 	{
 		for (unsigned int i = 0; i < size; ++i)
 		{
