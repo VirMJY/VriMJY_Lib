@@ -38,7 +38,9 @@ namespace vstl
 		Type& operator[](unsigned int index);
 		Type& at(unsigned int index);
 		//Modifiers
-
+		basic_string& append(const Type* c_str);
+		basic_string& append(const basic_string& _str);
+		basic_string& append(const Type c);
 		//String operations
 		const char* c_str()const;
         //Operator
@@ -107,6 +109,32 @@ namespace vstl
 		}
 		return m_pData[index];
 	}
+	//Modifiers
+	template<typename Type, typename _allocator>
+	basic_string& basic_string<Type, _allocator>::append(const Type* c_str)
+	{
+		
+	}
+	template<typename Type, typename _allocator>
+	basic_string& basic_string<Type, _allocator>::append(const basic_string<Type, _allocator>& _str)
+	{
+
+	}
+	template<typename Type, typename _allocator>
+	basic_string& basic_string<Type, _allocator>::append(const Type c)
+	{
+		if(m_Size + 1 < m_Capacity)
+		{
+			m_pData[m_Size] = c;
+			++m_Size;
+		}
+		else
+		{
+			
+		}
+
+		return *this;
+	}
 
 	//Operators
 	template<typename Type, typename _allocator>
@@ -125,11 +153,13 @@ namespace vstl
     {
 		if(&rhand == this)	return *this;
 
+		Type* temp = nullptr;
+		Malloc(m_Capacity, &temp);
+		CopyData(rhand.m_pData, temp, m_Size);
 		m_Size = rhand.m_Size;
 		m_Capacity = rhand.m_Capacity;
 		free(m_pData);
-		Malloc(m_Capacity, &m_pData);
-		CopyData(rhand.m_pData, m_pData, m_Size);
+		m_pData = temp;
     }
 	//Protected functions
 
@@ -148,14 +178,18 @@ namespace vstl
 		}
 	}
 
-	//Non-member functions
-	template<typename Type = char>
-	basic_string<Type, _allocator>& operator+ (basic_string<Type, _allocator>& lhand, basic_string<Type, _allocator>& rhand)
-	{
-
-	}
-
 	//Typedef
 	typedef basic_string<char> String;
+
+	//Non-member functions
+	String operator+ (String& lhand, String& rhand)
+	{
+		String temp = lhand;
+		temp.append(rhand);
+
+		return temp;
+	}
+
+	
 }
 #endif
