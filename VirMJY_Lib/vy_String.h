@@ -11,79 +11,86 @@ namespace vstl
 
 
 	/*************************************************/
-	/*						String					 */
+	/*				   basic_string					 */
 	/*************************************************/
 	template<typename Type = char, typename _allocator = Allocator>
-	class String
+	class basic_string
 	{
 	public:
         //Constructor
-        String();
-        String(const char* c_str);
-		String(String& string);
-		String(unsigned int Count, Type& a_Data);
+        basic_string();
+        basic_string(const char* c_str);
+		basic_string(basic_string& basic_string);
+		basic_string(unsigned int Count, Type& a_Data);
 
         //Destructor
-        ~String();
+        ~basic_string();
 
 
 		//Capacity
-
+		size_tp size() const;
+		size_tp length() const;
+		size_tp max_size() const;
+		size_tp capacity() const;
+		void clear();
+		bool empty() const;
 		//Element access
 
 		//Modifiers
 
-		//String operations
+		//basic_string operations
 		
         //Operator
-        bool operator==(const String& rhand)const;
-        String& operator=(const String& rhand);
+        bool operator==(const basic_string& rhand)const;
+        basic_string& operator=(const basic_string& rhand);
     protected:
 	private:
 		//Functions
 		void Malloc(size_tp size, Type** pData);
 		//Variables
 		size_tp m_Size;
+		size_tp m_Capacity;
+		size_tp m_MaxSize;
 		Type* m_CStr;
 	};
 
 
 	/*****************************************************/
-	/*				String	Implement					 */
+	/*				basic_string	Implement					 */
 	/*****************************************************/
 	//Public functions
 	//Constructors
-	template<typename Type = char, typename _allocator = Allocator>
-    String::String()
+	template<typename Type, typename _allocator>
+    basic_string<Type, _allocator>::basic_string():m_Size(0), m_Capacity(0), m_MaxSize(0)
     {
 
     }
-	template<typename Type = char, typename _allocator = Allocator>
-    String::String(const char* c_str)
+	template<typename Type, typename _allocator>
+    basic_string<Type, _allocator>::basic_string(const char* c_str)
     {
         
     }
-	template<typename Type = char, typename _allocator = Allocator>
-    String::String(String& rhand)
+	template<typename Type, typename _allocator>
+    basic_string<Type, _allocator>::basic_string(basic_string<Type, _allocator>& rhand)
     {
 		m_Size = Strlen()
     }
 
 	//Destructor
-	template<typename Type = char, typename _allocator = Allocator>
-    String<Type>::~String()
+	template<typename Type, typename _allocator>
+    basic_string<Type, _allocator>::~basic_string()
     {
 
     }
 
 	//Operators
-	template<typename Type = char, typename _allocator = Allocator>
-    bool String<Type>::operator==(const String& rhand)
+	template<typename Type, typename _allocator>
+    bool basic_string<Type, _allocator>::operator==(const basic_string<Type, _allocator>& rhand)
     {
 
     }
-	template<typename Type = char, typename _allocator = Allocator>
-    String& String<Type>::operator=(const String& rhand)
+	template<typename Type, typename _allocator>
+    basic_string& basic_string<Type, _allocator>::operator=(const basic_string<Type, _allocator>& rhand)
     {
 
     }
@@ -95,9 +102,12 @@ namespace vstl
 
 	//Non-member functions
 	template<typename Type = char>
-	String<Type>& operator+ (String<Type>& lhand, String<Type>& rhand)
+	basic_string<Type, _allocator>& operator+ (basic_string<Type, _allocator>& lhand, basic_string<Type, _allocator>& rhand)
 	{
 
 	}
+
+	//Typedef
+	typedef basic_string<char> String;
 }
 #endif
