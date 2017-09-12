@@ -113,7 +113,24 @@ namespace vstl
 	template<typename Type, typename _allocator>
 	basic_string& basic_string<Type, _allocator>::append(const Type* c_str)
 	{
-		
+		size_tp size = Strlen(c_str);
+		if(size + m_Size > m_Capacity)
+		{
+			Type* temp = nullptr;
+			Malloc(m_Capacity<<1, &temp);
+			CopyData(m_pData, temp, m_Size);
+			m_Capacity = m_Capacity<<1;
+			free(m_pData);
+			m_pData = temp;
+			append(c_str);
+		}
+		else
+		{
+			CopyData(m_pData + m_Size, c_str, size);
+			m_Size += size;
+		}
+
+		return *this;
 	}
 	template<typename Type, typename _allocator>
 	basic_string& basic_string<Type, _allocator>::append(const basic_string<Type, _allocator>& _str)
@@ -126,7 +143,6 @@ namespace vstl
 		if(m_Size + 1 < m_Capacity)
 		{
 			m_pData[m_Size] = c;
-			++m_Size;
 		}
 		else
 		{
@@ -137,8 +153,8 @@ namespace vstl
 			free(m_pData);
 			m_pData = temp;
 			m_pData[m_Size] = c;
-			++m_Size;
 		}
+		++m_Size;
 
 		return *this;
 	}
