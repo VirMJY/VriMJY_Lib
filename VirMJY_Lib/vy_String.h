@@ -43,6 +43,7 @@ namespace vstl
 		basic_string& append(const Type c);
 		void insert(const Type& c, unsigned int index);
 		void erase(unsigned int index);
+		void Swap(basic_string& rhand);
 		//String operations
 		const char* c_str()const;
         //Operator
@@ -219,6 +220,25 @@ namespace vstl
 			m_pData[i-1] = m_pData[i];
 		}
 	}
+	template<typename Type, typename _allocator>
+	inline void basic::string<Type, _allocator>::Swap(basic_string<Type, _allocator>& rhand)
+	{
+		//swap size
+		size_tp size = m_Size;
+		m_Size = rhand.m_Size;
+		rhand.m_Size = size;
+
+		//swap capacity
+		size_tp capacity = m_Capacity;
+		m_Capacity = rhand.m_Capacity;
+		rhand.m_Capacity = capacity;
+
+		//swap pData
+		Type* temp = m_pData;
+		m_pData = rhand.m_pData;
+		rhand.m_pData = temp;
+	}
+
 	//Operators
 	template<typename Type, typename _allocator>
     inline bool basic_string<Type, _allocator>::operator==(const basic_string<Type, _allocator>& rhand)
