@@ -148,7 +148,7 @@ namespace vstl
 		return m_pData;
 	}
 
-	//Modifider
+	//Modifiers
 	template<typename Type, typename _allocator>
 	inline void Vector<Type, _allocator>::swap(Vector<Type>& rhand)
 	{

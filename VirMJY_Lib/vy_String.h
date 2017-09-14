@@ -225,17 +225,17 @@ namespace vstl
 	template<typename Type, typename _allocator>
 	inline void basic_string<Type, _allocator>::Swap(basic_string<Type, _allocator>& rhand)
 	{
-		//swap size
+		//swap m_Size
 		size_tp size = m_Size;
 		m_Size = rhand.m_Size;
 		rhand.m_Size = size;
 
-		//swap capacity
+		//swap m_Capacity
 		size_tp capacity = m_Capacity;
 		m_Capacity = rhand.m_Capacity;
 		rhand.m_Capacity = capacity;
 
-		//swap pData
+		//swap m_pData
 		Type* temp = m_pData;
 		m_pData = rhand.m_pData;
 		rhand.m_pData = temp;
