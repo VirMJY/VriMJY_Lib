@@ -91,8 +91,42 @@ namespace vstl
     basic_string<Type, _allocator>::~basic_string()
     {
 		free(m_pData);
-    }
-
+	}
+	
+	//Capacity
+	template<typename Type, typename _allocator>
+	size_tp basic_string<Type, _allocator>::size() const
+	{
+		return m_Size;
+	}
+	template<typename Type, typename _allocator>
+	size_tp basic_string<Type, _allocator>::length() const
+	{
+		return m_Size;
+	}
+	template<typename Type, typename _allocator>
+	size_tp basic_string<Type, _allocator>::max_size() const
+	{
+		return -1;
+	}
+	template<typename Type, typename _allocator>
+	size_tp basic_string<Type, _allocator>::capacity() const
+	{
+		return m_Capacity;
+	}
+	template<typename Type, typename _allocator>
+	void basic_string<Type, _allocator>::clear()
+	{
+		m_Size = 0;
+		m_Capacity = 0;
+		free(m_pData);
+		m_pData = nullptr;
+	}
+	template<typename Type, typename _allocator>
+	bool basic_string<Type, _allocator>::empty() const
+	{
+		return m_Size == 0;
+	}
 	//Element access
 	template<typename Type, typename _allocator>
 	Type& basic_string<Type, _allocator>::operator[](unsigned int index)
