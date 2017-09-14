@@ -41,6 +41,8 @@ namespace vstl
 		basic_string& append(const Type* c_str);
 		basic_string& append(const basic_string& _str);
 		basic_string& append(const Type c);
+		void insert(const Type& c, unsigned int index);
+		void erase(unsigned int index);
 		//String operations
 		const char* c_str()const;
         //Operator
@@ -50,8 +52,9 @@ namespace vstl
 	private:
 		//Functions
 		void Malloc(size_tp size, Type** pData);
-		void Realloc(size_tp size, Type** pData);
+		void Realloc();
 		void CopyData(const Type* pOld, Type* pNew, size_tp size);
+		void init();
 		//Variables
 		size_tp m_Size;
 		size_tp m_Capacity;
@@ -67,12 +70,12 @@ namespace vstl
 	//Public functions
 	//Constructors
 	template<typename Type, typename _allocator>
-    basic_string<Type, _allocator>::basic_string():m_Size(0), m_Capacity(0), m_MaxSize(0)
+    inline basic_string<Type, _allocator>::basic_string():m_Size(0), m_Capacity(0), m_MaxSize(0)
     {
-
+		init();
     }
 	template<typename Type, typename _allocator>
-    basic_string<Type, _allocator>::basic_string(const char* c_str)
+    inline basic_string<Type, _allocator>::basic_string(const char* c_str)
     {
 		m_Size = Strlen(c_str);
 		m_Capacity = m_Size<<1;
@@ -80,7 +83,7 @@ namespace vstl
 		CopyData(c_str, m_pData, m_Size);
     }
 	template<typename Type, typename _allocator>
-    basic_string<Type, _allocator>::basic_string(basic_string<Type, _allocator>& rhand):m_Size(rhand.m_Size), m_Capacity(rhand.m_Capacity)
+    inline basic_string<Type, _allocator>::basic_string(basic_string<Type, _allocator>& rhand):m_Size(rhand.m_Size), m_Capacity(rhand.m_Capacity)
     {
 		Malloc(m_Capacity, &m_pData);
 		CopyData(rhand.m_pData, m_pData, m_Size);
@@ -88,34 +91,34 @@ namespace vstl
 
 	//Destructor
 	template<typename Type, typename _allocator>
-    basic_string<Type, _allocator>::~basic_string()
+    inline basic_string<Type, _allocator>::~basic_string()
     {
 		free(m_pData);
 	}
 	
 	//Capacity
 	template<typename Type, typename _allocator>
-	size_tp basic_string<Type, _allocator>::size() const
+	inline size_tp basic_string<Type, _allocator>::size() const
 	{
 		return m_Size;
 	}
 	template<typename Type, typename _allocator>
-	size_tp basic_string<Type, _allocator>::length() const
+	inline size_tp basic_string<Type, _allocator>::length() const
 	{
 		return m_Size;
 	}
 	template<typename Type, typename _allocator>
-	size_tp basic_string<Type, _allocator>::max_size() const
+	inline size_tp basic_string<Type, _allocator>::max_size() const
 	{
 		return -1;
 	}
 	template<typename Type, typename _allocator>
-	size_tp basic_string<Type, _allocator>::capacity() const
+	inline size_tp basic_string<Type, _allocator>::capacity() const
 	{
 		return m_Capacity;
 	}
 	template<typename Type, typename _allocator>
-	void basic_string<Type, _allocator>::clear()
+	inline void basic_string<Type, _allocator>::clear()
 	{
 		m_Size = 0;
 		m_Capacity = 0;
@@ -123,18 +126,18 @@ namespace vstl
 		m_pData = nullptr;
 	}
 	template<typename Type, typename _allocator>
-	bool basic_string<Type, _allocator>::empty() const
+	inline bool basic_string<Type, _allocator>::empty() const
 	{
 		return m_Size == 0;
 	}
 	//Element access
 	template<typename Type, typename _allocator>
-	Type& basic_string<Type, _allocator>::operator[](unsigned int index)
+	inline Type& basic_string<Type, _allocator>::operator[](unsigned int index)
 	{
 		return  m_pData[index];
 	}
 	template<typename Type, typename _allocator>
-	Type& basic_string<Type, _allocator>::at(unsigned int index)
+	inline Type& basic_string<Type, _allocator>::at(unsigned int index)
 	{
 		if(index < 0 || index >= size)
 		{
@@ -145,17 +148,12 @@ namespace vstl
 	}
 	//Modifiers
 	template<typename Type, typename _allocator>
-	basic_string& basic_string<Type, _allocator>::append(const Type* c_str)
+	inline basic_string& basic_string<Type, _allocator>::append(const Type* c_str)
 	{
 		size_tp size = Strlen(c_str);
 		if(size + m_Size > m_Capacity)
 		{
-			Type* temp = nullptr;
-			Malloc(m_Capacity<<1, &temp);
-			CopyData(m_pData, temp, m_Size);
-			m_Capacity = m_Capacity<<1;
-			free(m_pData);
-			m_pData = temp;
+			Realloc();
 			append(c_str);
 		}
 		else
@@ -167,13 +165,13 @@ namespace vstl
 		return *this;
 	}
 	template<typename Type, typename _allocator>
-	basic_string& basic_string<Type, _allocator>::append(const basic_string<Type, _allocator>& _str)
+	inline basic_string& basic_string<Type, _allocator>::append(const basic_string<Type, _allocator>& _str)
 	{
 		const Type* pStr = _str.c_str();
 		return append(pStr);
 	}
 	template<typename Type, typename _allocator>
-	basic_string& basic_string<Type, _allocator>::append(const Type c)
+	inline basic_string& basic_string<Type, _allocator>::append(const Type c)
 	{
 		if(m_Size + 1 < m_Capacity)
 		{
@@ -181,22 +179,49 @@ namespace vstl
 		}
 		else
 		{
-			Type* temp = nullptr;
-			Malloc(m_Capacity<<1, &temp);
-			CopyData(m_pData, temp, m_Size);
-			m_Capacity = m_Capacity<<1;
-			free(m_pData);
-			m_pData = temp;
+			Realloc();
 			m_pData[m_Size] = c;
 		}
 		++m_Size;
 
 		return *this;
 	}
+	template<typename Type, typename _allocator>
+	inline void basic_string<Type, _alloactor>::insert(const Type& c, unsigned int index)
+	{
+		if(index < 0 || index >= m_Size)
+		{
+			//Throw out_of_range exception
+			return;
+		}
+		if(m_Size + 1 > m_Capacity)
+			Realloc();
 
+		for(int i = m_Size; i > index; --i)
+		{
+			m_pData[i] = m_pData[i-1];
+		}
+		m_pData[index] = c;
+
+		++m_Size;
+	}
+	template<typename Type, typename _allocator>
+	inline void basic_string<Type, _allocator>::erase(unsigned int index)
+	{
+		if(m_Size <= 0 || index >= m_Size || index < 0)
+		{
+			//Throw out_of_range exception
+			return;
+		}
+
+		for(int i = index + 1; i < m_Size; ++i)
+		{
+			m_pData[i-1] = m_pData[i];
+		}
+	}
 	//Operators
 	template<typename Type, typename _allocator>
-    bool basic_string<Type, _allocator>::operator==(const basic_string<Type, _allocator>& rhand)
+    inline bool basic_string<Type, _allocator>::operator==(const basic_string<Type, _allocator>& rhand)
     {
 		if(rhand.m_Size != m_Size)	return false;
 		int size = 0;
@@ -207,35 +232,45 @@ namespace vstl
 		return size == m_Size;
     }
 	template<typename Type, typename _allocator>
-    basic_string& basic_string<Type, _allocator>::operator=(const basic_string<Type, _allocator>& rhand)
+    inline basic_string& basic_string<Type, _allocator>::operator=(const basic_string<Type, _allocator>& rhand)
     {
 		if(&rhand == this)	return *this;
 
-		Type* temp = nullptr;
-		Malloc(m_Capacity, &temp);
-		CopyData(rhand.m_pData, temp, m_Size);
-		m_Size = rhand.m_Size;
-		m_Capacity = rhand.m_Capacity;
-		free(m_pData);
-		m_pData = temp;
+		Realloc();
     }
 	//Protected functions
 
 	//Private functions
 	template<typename Type, typename _allocator>
-	void basic_string<Type, _allocator>::Malloc(size_tp size, Type** pData)
+	inline void basic_string<Type, _allocator>::Malloc(size_tp size, Type** pData)
 	{
 		*pData = (Type*)malloc(sizeof(Type)*size);
 	}
 	template<typename Type, typename _allocator>
-	void basic_string<Type, _allocator>::CopyData(Type* pOld, Type* pNew, size_tp size)
+	inline void basic_string<Type, _allocator>::Realloc()
+	{
+		Type* temp = nullptr;
+		Malloc(m_Capacity<<1, &temp);
+		CopyData(m_pData, temp, m_Size);
+		m_Capacity = m_Capacity<<1;
+		free(m_pData);
+		m_pData = temp;
+	}
+	template<typename Type, typename _allocator>
+	inline void basic_string<Type, _allocator>::CopyData(Type* pOld, Type* pNew, size_tp size)
 	{
 		for(int i = 0; i < size; ++i)
 		{
 		memcpy_s(&pOld[i], sizeof(Type), &pNew[i], sizeof(Type));
 		}
 	}
-
+	template<typename Type, typename _allocator>
+	inline void basic_string<Type, _allocator>::init()
+	{
+		m_Size = 1;
+		m_Capacity = 1;
+		Malloc(m_Size, &m_pData);
+	}
 	//Typedef
 	typedef basic_string<char> String;
 
