@@ -46,6 +46,8 @@ namespace vstl
 		void Swap(basic_string& rhand);
 		//String operations
 		const char* c_str()const;
+		idx_tp find(const Type& c) const;
+		idx_tp rfind(const Type& c)const;
         //Operator
         bool operator==(const basic_string& rhand)const;
         basic_string& operator=(const basic_string& rhand);
@@ -221,7 +223,7 @@ namespace vstl
 		}
 	}
 	template<typename Type, typename _allocator>
-	inline void basic::string<Type, _allocator>::Swap(basic_string<Type, _allocator>& rhand)
+	inline void basic_string<Type, _allocator>::Swap(basic_string<Type, _allocator>& rhand)
 	{
 		//swap size
 		size_tp size = m_Size;
@@ -237,6 +239,29 @@ namespace vstl
 		Type* temp = m_pData;
 		m_pData = rhand.m_pData;
 		rhand.m_pData = temp;
+	}
+	//String operations
+	template<typename Type, typename _allocator>
+	inline idx_tp basic_string<Type, _allocator>::find(const Type& c)const
+	{
+		for(int i = 0; i < m_Size; ++i)
+		{
+			if(m_pData[i] == c)
+				return i;
+		}
+
+		return -1;
+	}
+	template<typename Type, typename _allocator>
+	inline idx_tp basic_string<Type, _allocator>::rfind(const Type& c)const
+	{
+		for(int i = m_Size - 1; i >= 0; --i)
+		{
+			if(m_pData[i] == c)
+				return i;
+		}
+
+		return -1;
 	}
 
 	//Operators
