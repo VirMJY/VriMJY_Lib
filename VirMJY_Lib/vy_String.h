@@ -135,7 +135,8 @@ namespace vstl
 	template<typename Type, typename _allocator>
 	basic_string& basic_string<Type, _allocator>::append(const basic_string<Type, _allocator>& _str)
 	{
-
+		const Type* pStr = _str.c_str();
+		return append(pStr);
 	}
 	template<typename Type, typename _allocator>
 	basic_string& basic_string<Type, _allocator>::append(const Type c)
