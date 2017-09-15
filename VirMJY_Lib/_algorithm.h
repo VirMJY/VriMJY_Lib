@@ -55,6 +55,36 @@ namespace vstl
         qsort(rhand, start, mid-1);
         qsort(rhand, mid-1, end);
     }
+
+    //相加不使用加减乘除 适用于unsigned int/shor/char
+    unsigned long long add(unsigned long long lhand, unsigned long long rhand)
+    {
+        if(lhand == 0 || rhand == 0)
+            return lhand|rhand;
+
+        unsigned long long and = lhand&rhand;
+        unsigned long long xor = lhand^rhand;
+        and << 1;
+
+        return add(and, xor);
+    }
+
+    //字符串翻转  E : string ->gnirts 
+    void reverse(char* _str)
+    {
+        size_tp size = Strlen(_str);
+        if(size <= 0)   return;
+
+        idx_tp start = 0;
+        idx_tp end = size-1;
+        
+        while(start < end)
+        {
+            char temp = _str[start];
+            _str[start] = _str[end];
+            _str[end] = temp;
+        }
+    }
 }
 
 #endif
