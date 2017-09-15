@@ -70,20 +70,41 @@ namespace vstl
     }
 
     //字符串翻转  E : string ->gnirts 
-    void reverse(char* _str)
-    {
-        size_tp size = Strlen(_str);
-        if(size <= 0)   return;
-
-        idx_tp start = 0;
-        idx_tp end = size-1;
-        
+    void reverse(char* _str, idx_tp start, idx_tp end)
+    {   
         while(start < end)
         {
             char temp = _str[start];
             _str[start] = _str[end];
             _str[end] = temp;
+
+            ++start;
+            --end;
         }
+    }
+
+    //字符串翻转 E : this is a string. -> .string a is this
+    void __Reverse(char* _str)
+    {
+        size_tp size = Strlen(_str);
+        if(size <= 0)   return;
+
+        idx_tp start = 0;
+        idx_tp temp = start;
+        idx_tp end = size;
+
+        while(temp < end)
+        {
+            while(_str[temp] != ' ' && temp < end)
+            {
+                ++temp;
+            }
+            reverse(_str, start, temp-1);
+            ++temp;
+            start = temp;
+        }
+
+        reverse(_str, 0, end);
     }
 }
 
