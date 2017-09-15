@@ -6,7 +6,7 @@ namespace vstl
 {
     //冒泡排序
     template<typename T>
-    void bubbleSort(const T& rhand, size_tp size = 0)
+    void bubbleSort(T* rhand, size_tp size = 0)
     {
         if(size <= 0)   return;
 
@@ -24,7 +24,37 @@ namespace vstl
         }
     }
 
-    //
+    //快速排序
+    template<typename T>
+    void qsort(T* rhand, idx_tp start, idx_tp end)
+    {
+        if(start > end)
+            return;
+
+        indx_tp mid = start + end >> 1;
+        T temp = rhand[end];
+        rhand[end] = rhand[mid];
+        rhand[mid] = temp;
+
+        int i = start, j = end;
+        while(i < mid && end > mid)
+        {
+            while(rhand[mid] > rhand[start])
+            {
+                ++i;
+            }
+            while(rhand[mid] <= rhand[end] )
+            {
+                --j;
+            }
+            temp = rhand[start];
+            rhand[start] = rhand[end];
+            rhand[end] = temp;
+        }
+
+        qsort(rhand, start, mid-1);
+        qsort(rhand, mid-1, end);
+    }
 }
 
 #endif
