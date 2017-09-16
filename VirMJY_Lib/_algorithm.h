@@ -56,6 +56,28 @@ namespace vstl
         qsort(rhand, mid-1, end);
     }
 
+    //二分查找 适用于有序递增数组
+    template<typename T>
+    idx_tp bin_search(T* array, T& finded,idx_tp start, idx_tp end) //[start, end]
+    {
+        while(start < end)
+        {
+            idx_tp mid = start + end >> 1;
+            if(array[mid] == finded)
+                return mid;
+            else if (array[mid] > finded)
+            {
+                end = mid;
+            }
+            else
+            {
+                start = mid;
+            }
+        }
+
+        return -1;
+    }
+
     //相加不使用加减乘除 适用于unsigned int/shor/char
     unsigned long long add(unsigned long long lhand, unsigned long long rhand)
     {

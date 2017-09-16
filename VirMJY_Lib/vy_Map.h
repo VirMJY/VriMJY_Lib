@@ -11,5 +11,10 @@ namespace vstl
     protected:
     private:
     };
+
+    unsigned long hash()
+    {
+        
+    }
 }
 #endif
